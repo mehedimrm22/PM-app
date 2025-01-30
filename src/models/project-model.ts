@@ -9,6 +9,7 @@ export class Project {
     public title: string,
     public description: string,
     public people: number,
+    public comment: string,
     public status: ProjectStatus
   ) {}
 }

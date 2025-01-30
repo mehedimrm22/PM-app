@@ -8,6 +8,7 @@ export class ProjectInput extends Component<HTMLDivElement, HTMLFormElement> {
   titleInputElement: HTMLInputElement;
   descriptionInputElement: HTMLInputElement;
   peopleInputElement: HTMLInputElement;
+  commentsInputElement: HTMLInputElement;
 
   constructor() {
     super('project-input', 'app', true, 'user-input');
@@ -21,6 +22,9 @@ export class ProjectInput extends Component<HTMLDivElement, HTMLFormElement> {
       '#people'
     ) as HTMLInputElement;
     this.configure();
+    this.commentsInputElement = this.element.querySelector(
+      '#comment'
+    ) as HTMLInputElement;
   }
 
   configure() {
@@ -29,10 +33,11 @@ export class ProjectInput extends Component<HTMLDivElement, HTMLFormElement> {
 
   renderContent() {}
 
-  private gatherUserInput(): [string, string, number] | void {
+  private gatherUserInput(): [string, string, number, string] | void {
     const enteredTitle = this.titleInputElement.value;
     const enteredDescription = this.descriptionInputElement.value;
     const enteredPeople = this.peopleInputElement.value;
+    const enteredComments = this.commentsInputElement.value;
 
     const titleValidatable: Validatable = {
       value: enteredTitle,
@@ -49,16 +54,22 @@ export class ProjectInput extends Component<HTMLDivElement, HTMLFormElement> {
       min: 1,
       max: 5,
     };
+    const commentsValidatable: Validatable = {
+      value: enteredComments,
+      required: true,
+      minLength: 3,
+    };
 
     if (
       !validate(titleValidatable) ||
       !validate(descriptionValidatable) ||
-      !validate(peopleValidatable)
+      !validate(peopleValidatable) ||
+      !validate(commentsValidatable)
     ) {
       alert('Invalid input, please try again!');
       return;
     } else {
-      return [enteredTitle, enteredDescription, +enteredPeople];
+      return [enteredTitle, enteredDescription, +enteredPeople, enteredComments];
     }
   }
 
@@ -66,6 +77,7 @@ export class ProjectInput extends Component<HTMLDivElement, HTMLFormElement> {
     this.titleInputElement.value = '';
     this.descriptionInputElement.value = '';
     this.peopleInputElement.value = '';
+    this.commentsInputElement.value = '';
   }
 
   @autobind
@@ -73,8 +85,8 @@ export class ProjectInput extends Component<HTMLDivElement, HTMLFormElement> {
     event.preventDefault();
     const userInput = this.gatherUserInput();
     if (Array.isArray(userInput)) {
-      const [title, desc, people] = userInput;
-      projectState.addProject(title, desc, people);
+      const [title, desc, people, comments] = userInput;
+      projectState.addProject(title, desc, people, comments);
       this.clearInputs();
     }
   }
